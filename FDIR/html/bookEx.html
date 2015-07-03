@@ -1,0 +1,226 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>bookEx</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-03-24"><meta name="DC.source" content="bookEx.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Unknown Input Observer Dynamic System Matricies</a></li><li><a href="#2">Construct the state space system</a></li><li><a href="#3">Step one: Check rank</a></li><li><a href="#4">Step two: Compute Observer Matricies</a></li><li><a href="#5">Step three: check observability</a></li><li><a href="#6">Pole Placement</a></li><li><a href="#7">Finish observer design</a></li><li><a href="#8">Simulation results</a></li><li><a href="#9">Sim the system</a></li><li><a href="#10">Plot the results</a></li></ul></div><h2>Unknown Input Observer Dynamic System Matricies<a name="1"></a></h2><p>This example is form the book: Robust Model Based Fault Diagnosis for Dynamic Systems by J. Chen Please see the associated ShareLaTeX pdf file "UIO and Examples"</p><pre class="codeinput">A = [-1 1 0;-1 0 0;0 -1 -1];
+B = [-1;0;0];
+C = [1 0 0;0 0 1];
+D = 0;
+E = B;
+</pre><h2>Construct the state space system<a name="2"></a></h2><p>Let us construct the system as a state space object for simulation.</p><pre class="codeinput">sys = ss(A,B,C,D);
+</pre><h2>Step one: Check rank<a name="3"></a></h2><p>We check to see if the rank(CE) = rank(E) = 1</p><pre class="codeinput">rank(C*E)
+rank(E)
+</pre><pre class="codeoutput">
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+</pre><h2>Step two: Compute Observer Matricies<a name="4"></a></h2><p>Since we have no issues in the previous step, let us compute the observer matrices now:</p><pre class="codeinput">H = E*inv((C*E)'*(C*E))*(C*E)'
+T = eye(3)-H*C
+A1 = T*A
+</pre><pre class="codeoutput">
+H =
+
+     1     0
+     0     0
+     0     0
+
+
+T =
+
+     0     0     0
+     0     1     0
+     0     0     1
+
+
+A1 =
+
+     0     0     0
+    -1     0     0
+     0    -1    -1
+
+</pre><h2>Step three: check observability<a name="5"></a></h2><p>We must check the system A1,C observability</p><pre class="codeinput">rank(obsv(A1,C))
+</pre><pre class="codeoutput">
+ans =
+
+     3
+
+</pre><h2>Pole Placement<a name="6"></a></h2><p>Pole placement is used to assign the observer poles</p><pre class="codeinput">K1 = place(A',C',[-2,-10,-5])'
+</pre><pre class="codeoutput">
+K1 =
+
+    6.7231   -3.7816
+    7.5581  -11.3458
+   -3.0543    8.2769
+
+</pre><h2>Finish observer design<a name="7"></a></h2><p>Finally, the F and K matricies are computed</p><pre class="codeinput">F = A1-K1*C
+K = K1 + F*H
+</pre><pre class="codeoutput">
+F =
+
+   -6.7231         0    3.7816
+   -8.5581         0   11.3458
+    3.0543   -1.0000   -9.2769
+
+
+K =
+
+         0   -3.7816
+   -1.0000  -11.3458
+         0    8.2769
+
+</pre><h2>Simulation results<a name="8"></a></h2><p>Set up simulation initial condiditons</p><pre class="codeinput">x1_0 = 100;
+x2_0 = -100;
+x3_0 = 1;
+
+d = 10;
+</pre><h2>Sim the system<a name="9"></a></h2><pre class="codeinput">sim(<span class="string">'exOne'</span>)
+</pre><pre class="codeoutput">Warning: Input port 3 of 'exOne/UIO/z' is not connected. 
+Warning: Output port 1 of 'exOne/UIO/z/u' is not connected. 
+Warning: Using a default value of 0.2 for maximum step size.  The simulation
+step size will be equal to or less than this value.  You can disable this
+diagnostic by setting 'Automatic solver parameter selection' diagnostic to
+'none' in the Diagnostics page of the configuration parameters dialog 
+</pre><h2>Plot the results<a name="10"></a></h2><pre class="codeinput">t = linspace(1,10,length(X_hat));
+figure(1),plot(t,X),hold <span class="string">on</span>
+plot(t,X_hat(:,1),<span class="string">'xb'</span>),hold <span class="string">on</span>
+plot(t,X_hat(:,2),<span class="string">'xg'</span>),hold <span class="string">on</span>
+plot(t,X_hat(:,3),<span class="string">'xr'</span>)
+xlabel(<span class="string">'Time in seconds'</span>),ylabel(<span class="string">'State trajectory and estimate'</span>)
+title(<span class="string">'Dynamic system state and UIO estimate'</span>)
+</pre><img vspace="5" hspace="5" src="bookEx_01.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Unknown Input Observer Dynamic System Matricies
+% This example is form the book: 
+% Robust Model Based Fault Diagnosis for Dynamic Systems by J. Chen
+% Please see the associated ShareLaTeX pdf file "UIO and Examples"
+A = [-1 1 0;-1 0 0;0 -1 -1];
+B = [-1;0;0];
+C = [1 0 0;0 0 1];
+D = 0;
+E = B;
+
+%% Construct the state space system
+% Let us construct the system as a state space object for simulation.
+sys = ss(A,B,C,D);
+
+%% Step one: Check rank
+% We check to see if the rank(CE) = rank(E) = 1
+rank(C*E)
+rank(E)
+
+%% Step two: Compute Observer Matricies
+% Since we have no issues in the previous step, let us compute the observer
+% matrices now:
+H = E*inv((C*E)'*(C*E))*(C*E)'
+T = eye(3)-H*C
+A1 = T*A
+
+%% Step three: check observability 
+% We must check the system A1,C observability
+rank(obsv(A1,C))
+
+%% Pole Placement 
+% Pole placement is used to assign the observer poles
+K1 = place(A',C',[-2,-10,-5])'
+
+%% Finish observer design
+% Finally, the F and K matricies are computed
+F = A1-K1*C
+K = K1 + F*H
+
+%% Simulation results
+%
+% Set up simulation initial condiditons
+x1_0 = 100;
+x2_0 = -100;
+x3_0 = 1;
+
+d = 10;
+
+
+%% Sim the system
+sim('exOne')
+
+%% Plot the results
+t = linspace(1,10,length(X_hat));
+figure(1),plot(t,X),hold on
+plot(t,X_hat(:,1),'xb'),hold on
+plot(t,X_hat(:,2),'xg'),hold on
+plot(t,X_hat(:,3),'xr')
+xlabel('Time in seconds'),ylabel('State trajectory and estimate')
+title('Dynamic system state and UIO estimate')
+
+
+
+##### SOURCE END #####
+--></body></html>
