@@ -85,6 +85,48 @@
                         </Category>
                     </Info>
                 </File>
+                <File Location="chenEx3p3p3mdlV3.slx">
+                    <Info>
+                        <Category UUID="FileClassCategory">
+                            <Label UUID="design"/>
+                        </Category>
+                    </Info>
+                </File>
+                <File Location="chenEx3p3p3mdlV3.slx.autosave">
+                    <Info>
+                        <Category UUID="FileClassCategory">
+                            <Label UUID="other"/>
+                        </Category>
+                    </Info>
+                </File>
+                <File Location="chenEx3p3p3V2.m">
+                    <Info>
+                        <Category UUID="FileClassCategory">
+                            <Label UUID="design"/>
+                        </Category>
+                    </Info>
+                </File>
+                <File Location="graphAnalysis.m~">
+                    <Info>
+                        <Category UUID="FileClassCategory">
+                            <Label UUID="other"/>
+                        </Category>
+                    </Info>
+                </File>
+                <File Location="graphAnalysis.m">
+                    <Info>
+                        <Category UUID="FileClassCategory">
+                            <Label UUID="design"/>
+                        </Category>
+                    </Info>
+                </File>
+                <File Location="chenEx3p3p3V3.m">
+                    <Info>
+                        <Category UUID="FileClassCategory">
+                            <Label UUID="design"/>
+                        </Category>
+                    </Info>
+                </File>
             </File>
             <File Location="New folder">
                 <File Location="bookEx_01.eps">
