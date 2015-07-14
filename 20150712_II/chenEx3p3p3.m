@@ -13,9 +13,9 @@ u3Val = 29980;
 
 X0 = [0.3412;525.7;525.7;496.2];
 
-fa1 = 0;
+fa1 = 1;
 fa2 = 0;
-fa3 = 1;
+fa3 = 0;
 
 %% Dynamic system 
 
@@ -36,7 +36,7 @@ E = [1.0;20.758;0.0;0.0]
 H1 = [
       21.758        -1.0        0.0;
       0.0           1.0         0.0;
-      0.0           0.0         0.0;
+      0.0           0.0         1;
       -2075.8       100.0       0.0
       ]
 
@@ -96,8 +96,22 @@ K2 =    [
 
 sim('ChenEx3p3p3')
 
-% figure,
-% plot(tout,r1)
+figure,
+subplot(311),
+plot(tout,u1R,'k'),ylabel('u1_R'),xlabel('Time (sec)'),title('Inputs: u1_R, u2_R, u3_R')
+subplot(312),
+plot(tout,u2R,'b'),ylabel('u2_R'),xlabel('Time (sec)')
+subplot(313),
+plot(tout,u3R,'r'),ylabel('u3_R'),xlabel('Time (sec)')
+
+figure,
+subplot(311),
+plot(tout,y1R,'k'),ylabel('y1_R'),xlabel('Time (sec)'),title('Outputs: y1_R, y2_R, y3_R')
+subplot(312),
+plot(tout,y2R,'b'),ylabel('y2_R'),xlabel('Time (sec)')
+subplot(313),
+plot(tout,y3R,'r'),ylabel('y3_R'),xlabel('Time (sec)')
+
 % 
 % figure,
 % plot(tout,r2)
