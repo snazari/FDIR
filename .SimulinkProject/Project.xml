@@ -902,6 +902,37 @@
                 </Info>
             </File>
         </File>
+        <File Location="20150715">
+            <Info>
+                <Category UUID="FileClassCategory">
+                    <Label UUID="none"/>
+                </Category>
+            </Info>
+            <DIR_SIGNIFIER Location="1">
+                <Info/>
+            </DIR_SIGNIFIER>
+            <File Location="ResidualTF.mn">
+                <Info>
+                    <Category UUID="FileClassCategory">
+                        <Label UUID="other"/>
+                    </Category>
+                </Info>
+            </File>
+            <File Location="chenEx3p3p3_final.m">
+                <Info>
+                    <Category UUID="FileClassCategory">
+                        <Label UUID="design"/>
+                    </Category>
+                </Info>
+            </File>
+            <File Location="ChenEx3p3p3_final.slx">
+                <Info>
+                    <Category UUID="FileClassCategory">
+                        <Label UUID="design"/>
+                    </Category>
+                </Info>
+            </File>
+        </File>
     </Files>
     <ProjectData Location="Root"/>
     <Categories Location="Root">
