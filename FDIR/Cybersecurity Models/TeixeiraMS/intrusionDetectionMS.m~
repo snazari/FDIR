@@ -72,10 +72,10 @@ f7 = [0 0 0 0 0 0 1]'  % Vertex seven is the intruder
 E = [f1 f3 f5]
 
 % Choose the agent to be attacked
-flt1  = 0
+flt1  = 1
 flt2  = 0
 flt3  = 0
-flt4  = 1
+flt4  = 0
 flt5  = 0
 flt6  = 0
 flt7  = 0
