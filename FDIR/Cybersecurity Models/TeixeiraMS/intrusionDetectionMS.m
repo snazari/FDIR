@@ -145,11 +145,11 @@ sim('TeixeiraModel')
 
 figure,
 subplot(311),
-plot(fn2),ylabel('r12'),xlabel('Time (sec)'),title('Residual Signal for Node 2'), grid on, ylim([-5,5])
+plot(fn2,'LineWidth',2),ylabel('r12'),xlabel('Time (sec)'),title('Residual Signal for Agent 2'), grid on, ylim([-5,5])
 subplot(312),
-plot(fn3),ylabel('r13'),xlabel('Time (sec)'),title('Residual Signal for Node 3'), grid on, ylim([-5,5])
+plot(fn3,'r','LineWidth',2),ylabel('r13'),xlabel('Time (sec)'),title('Residual Signal for Agent 3'), grid on, ylim([-5,5])
 subplot(313),
-plot(fn4),ylabel('r14'),xlabel('Time (sec)'),title('Residual Signal for Node 4'), grid on, ylim([-5,5])
+plot(fn4,'g','LineWidth',2),ylabel('r14'),xlabel('Time (sec)'),title('Residual Signal for Agent 4'), grid on, ylim([-5,5])
 % 
 % figure,
 % subplot(311),
