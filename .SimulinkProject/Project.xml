@@ -957,6 +957,26 @@
                 </Info>
             </File>
         </File>
+        <File Location="2017">
+            <Info>
+                <Category UUID="FileClassCategory">
+                    <Label UUID="none"/>
+                </Category>
+            </Info>
+            <DIR_SIGNIFIER Location="1">
+                <Info/>
+            </DIR_SIGNIFIER>
+            <File Location="PIO Models">
+                <DIR_SIGNIFIER Location="1">
+                    <Info/>
+                </DIR_SIGNIFIER>
+                <Info>
+                    <Category UUID="FileClassCategory">
+                        <Label UUID="none"/>
+                    </Category>
+                </Info>
+            </File>
+        </File>
     </Files>
     <ProjectData Location="Root"/>
     <Categories Location="Root">
@@ -1001,4 +1021,5 @@
     <Info Location="ProjectData">
         <Info Name="FDIR"/>
     </Info>
+    <ProjectPath Location="Root"/>
 </project>
