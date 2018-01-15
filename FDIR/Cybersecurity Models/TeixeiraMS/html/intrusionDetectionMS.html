@@ -1,0 +1,936 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>intrusionDetectionMS</title><meta name="generator" content="MATLAB 9.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-12-25"><meta name="DC.source" content="intrusionDetectionMS.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Sam Nazari</a></li><li><a href="#2">Simulation parameters</a></li><li><a href="#3">Dynamic system</a></li><li><a href="#4">Construct Fault Vectors</a></li><li><a href="#5">UIO 1</a></li><li><a href="#6">UIO 2</a></li><li><a href="#7">Sim &amp; Plot</a></li></ul></div><h2 id="1">Sam Nazari</h2><pre>Teixeira MS Thesis Intrusion Detection Model
+06-Nov-2016
+04-Jan-2017
+12-Jan-2017</pre><pre class="codeinput">clear,
+clc
+</pre><h2 id="2">Simulation parameters</h2><pre class="codeinput">TSIM = 20;
+
+<span class="comment">% u1Val = 34.632;</span>
+<span class="comment">% u2Val = 1641.6;</span>
+<span class="comment">% u3Val = 29980;</span>
+<span class="comment">%</span>
+<span class="comment">% X0 = [0.3412;525.7;525.7;496.2];</span>
+<span class="comment">%</span>
+<span class="comment">% z110 = 518.6174;</span>
+<span class="comment">% z410 = -51365.5370;</span>
+<span class="comment">% z320 = 472.2;</span>
+<span class="comment">% z420 = -18391.8;</span>
+<span class="comment">%</span>
+<span class="comment">% fa1 = 0;</span>
+<span class="comment">% fa2 = 0;</span>
+<span class="comment">% fa3 = 1;</span>
+<span class="comment">%</span>
+<span class="comment">% f = [fa1;fa2;fa3]</span>
+</pre><h2 id="3">Dynamic system</h2><pre class="codeinput">L = [
+    3   -1  -1  -1  0   0   0;
+    -1  4   -1  -1  -1  0   0;
+    -1  -1  3   0   0   -1  0;
+    -1  -1  0   3   0   0  -1;
+    0   -1  0   0   2   0  -1;
+    0   0   -1  0   0   2  -1;
+    0   0   0  -1  -1  -1   3
+    ]
+
+A = -L
+
+B = eye(7)
+Bf=B;
+Bf(2,2)=0
+
+C = [
+    0 0 0 0 0 0 0;
+    0 1 0 0 0 0 0;
+    0 0 1 0 0 0 0;
+    0 0 0 1 0 0 0;
+    0 0 0 0 0 0 0;
+    0 0 0 0 0 0 0;
+    0 0 0 0 0 0 0
+    ]
+
+E = [1.0;20.758;0.0;0.0]
+
+x0 = [0 1 1 0 0 0 0]
+</pre><pre class="codeoutput">
+L =
+
+     3    -1    -1    -1     0     0     0
+    -1     4    -1    -1    -1     0     0
+    -1    -1     3     0     0    -1     0
+    -1    -1     0     3     0     0    -1
+     0    -1     0     0     2     0    -1
+     0     0    -1     0     0     2    -1
+     0     0     0    -1    -1    -1     3
+
+
+A =
+
+    -3     1     1     1     0     0     0
+     1    -4     1     1     1     0     0
+     1     1    -3     0     0     1     0
+     1     1     0    -3     0     0     1
+     0     1     0     0    -2     0     1
+     0     0     1     0     0    -2     1
+     0     0     0     1     1     1    -3
+
+
+B =
+
+     1     0     0     0     0     0     0
+     0     1     0     0     0     0     0
+     0     0     1     0     0     0     0
+     0     0     0     1     0     0     0
+     0     0     0     0     1     0     0
+     0     0     0     0     0     1     0
+     0     0     0     0     0     0     1
+
+
+Bf =
+
+     1     0     0     0     0     0     0
+     0     0     0     0     0     0     0
+     0     0     1     0     0     0     0
+     0     0     0     1     0     0     0
+     0     0     0     0     1     0     0
+     0     0     0     0     0     1     0
+     0     0     0     0     0     0     1
+
+
+C =
+
+     0     0     0     0     0     0     0
+     0     1     0     0     0     0     0
+     0     0     1     0     0     0     0
+     0     0     0     1     0     0     0
+     0     0     0     0     0     0     0
+     0     0     0     0     0     0     0
+     0     0     0     0     0     0     0
+
+
+E =
+
+    1.0000
+   20.7580
+         0
+         0
+
+
+x0 =
+
+     0     1     1     0     0     0     0
+
+</pre><h2 id="4">Construct Fault Vectors</h2><pre class="codeinput">f1 = [1 0 0 0 0 0 0]'  <span class="comment">% Vertex one is the intruder</span>
+f2 = [0 1 0 0 0 0 0]'  <span class="comment">% Vertex two is the intruder</span>
+f3 = [0 0 1 0 0 0 0]'  <span class="comment">% Vertex three is the intruder</span>
+f4 = [0 0 0 1 0 0 0]'  <span class="comment">% Vertex four is the intruder</span>
+f5 = [0 0 0 0 1 0 0]'  <span class="comment">% Vertex five is the intruder</span>
+f6 = [0 0 0 0 0 1 0]'  <span class="comment">% Vertex six is the intruder</span>
+f7 = [0 0 0 0 0 0 1]'  <span class="comment">% Vertex seven is the intruder</span>
+
+<span class="comment">%E = [f1 f2 f3 f4 f5 f6 f7]</span>
+<span class="comment">%E = [f2 f3 f4 f5 f6 f7]</span>
+E = [f1 f3 f5]
+
+<span class="comment">% Choose the agent to be attacked</span>
+flt1  = 0
+flt2  = 0
+flt3  = 0
+flt4  = 1
+flt5  = 0
+flt6  = 0
+flt7  = 0
+
+<span class="comment">% Choose a magnitude for the attack</span>
+f1Val = 10
+f2Val = 10
+f3Val = 10
+f4Val = 10
+f5Val = 10
+f6Val = 10
+f7Val = 10
+
+<span class="comment">% Chose the attack time</span>
+tf1   = 2
+tf2   = 2
+tf3   = 2
+tf4   = 2
+tf5   = 2
+tf6   = 5
+tf7   = 7
+</pre><pre class="codeoutput">
+f1 =
+
+     1
+     0
+     0
+     0
+     0
+     0
+     0
+
+
+f2 =
+
+     0
+     1
+     0
+     0
+     0
+     0
+     0
+
+
+f3 =
+
+     0
+     0
+     1
+     0
+     0
+     0
+     0
+
+
+f4 =
+
+     0
+     0
+     0
+     1
+     0
+     0
+     0
+
+
+f5 =
+
+     0
+     0
+     0
+     0
+     1
+     0
+     0
+
+
+f6 =
+
+     0
+     0
+     0
+     0
+     0
+     1
+     0
+
+
+f7 =
+
+     0
+     0
+     0
+     0
+     0
+     0
+     1
+
+
+E =
+
+     1     0     0
+     0     0     0
+     0     1     0
+     0     0     0
+     0     0     1
+     0     0     0
+     0     0     0
+
+
+flt1 =
+
+     0
+
+
+flt2 =
+
+     0
+
+
+flt3 =
+
+     0
+
+
+flt4 =
+
+     1
+
+
+flt5 =
+
+     0
+
+
+flt6 =
+
+     0
+
+
+flt7 =
+
+     0
+
+
+f1Val =
+
+    10
+
+
+f2Val =
+
+    10
+
+
+f3Val =
+
+    10
+
+
+f4Val =
+
+    10
+
+
+f5Val =
+
+    10
+
+
+f6Val =
+
+    10
+
+
+f7Val =
+
+    10
+
+
+tf1 =
+
+     2
+
+
+tf2 =
+
+     2
+
+
+tf3 =
+
+     2
+
+
+tf4 =
+
+     2
+
+
+tf5 =
+
+     2
+
+
+tf6 =
+
+     5
+
+
+tf7 =
+
+     7
+
+</pre><h2 id="5">UIO 1</h2><p>This UIO is insensitive to faults in agent 2, but can detect faults in agents 3 and 4:</p><pre class="codeinput">bf1 = [0 1 0 0 0 0 0]'
+
+<span class="comment">% Rank conditions</span>
+rank(C*bf1)
+rank(bf1)
+
+<span class="comment">% Observer matrices</span>
+CE = C*bf1
+CEin = inv(CE'*CE)
+H1=bf1*CEin*CE'
+T1 = eye(7)-H1*C
+A11 = T1*A
+rank(obsv(A11,C))
+k11 = place(A11,C,[-1,-2,-3,-4,-5,-6,-7])
+<span class="comment">%F = A1-k1*C</span>
+F1 = A+H1*C*L-k11*C
+k1 = k11 + F1*H1
+</pre><pre class="codeoutput">
+bf1 =
+
+     0
+     1
+     0
+     0
+     0
+     0
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+CE =
+
+     0
+     1
+     0
+     0
+     0
+     0
+     0
+
+
+CEin =
+
+     1
+
+
+H1 =
+
+     0     0     0     0     0     0     0
+     0     1     0     0     0     0     0
+     0     0     0     0     0     0     0
+     0     0     0     0     0     0     0
+     0     0     0     0     0     0     0
+     0     0     0     0     0     0     0
+     0     0     0     0     0     0     0
+
+
+T1 =
+
+     1     0     0     0     0     0     0
+     0     0     0     0     0     0     0
+     0     0     1     0     0     0     0
+     0     0     0     1     0     0     0
+     0     0     0     0     1     0     0
+     0     0     0     0     0     1     0
+     0     0     0     0     0     0     1
+
+
+A11 =
+
+    -3     1     1     1     0     0     0
+     0     0     0     0     0     0     0
+     1     1    -3     0     0     1     0
+     1     1     0    -3     0     0     1
+     0     1     0     0    -2     0     1
+     0     0     1     0     0    -2     1
+     0     0     0     1     1     1    -3
+
+
+ans =
+
+     7
+
+
+k11 =
+
+         0         0         0         0         0         0         0
+    0.4469    7.0316   -0.0797    0.4125    0.3204    0.0027    0.1221
+    0.8230    0.5890    2.4289   -0.7112   -0.0196    0.8962   -0.1124
+    0.9040    1.1596   -0.6336    2.5395    0.1004   -0.0957    0.9599
+         0         0         0         0         0         0         0
+         0         0         0         0         0         0         0
+         0         0         0         0         0         0         0
+
+
+F1 =
+
+   -3.0000    1.0000    1.0000    1.0000         0         0         0
+         0   -7.0316    0.0797   -0.4125         0         0         0
+    1.0000    0.4110   -5.4289    0.7112         0    1.0000         0
+    1.0000   -0.1596    0.6336   -5.5395         0         0    1.0000
+         0    1.0000         0         0   -2.0000         0    1.0000
+         0         0    1.0000         0         0   -2.0000    1.0000
+         0         0         0    1.0000    1.0000    1.0000   -3.0000
+
+
+k1 =
+
+         0    1.0000         0         0         0         0         0
+    0.4469         0   -0.0797    0.4125    0.3204    0.0027    0.1221
+    0.8230    1.0000    2.4289   -0.7112   -0.0196    0.8962   -0.1124
+    0.9040    1.0000   -0.6336    2.5395    0.1004   -0.0957    0.9599
+         0    1.0000         0         0         0         0         0
+         0         0         0         0         0         0         0
+         0         0         0         0         0         0         0
+
+</pre><h2 id="6">UIO 2</h2><p>This UIO is insensitive to faults in agent 3, but can detect faults in agents 2 and 4:</p><pre class="codeinput">bf2 = [0 0 1 0 0 0 0]'
+
+<span class="comment">% Rank conditions</span>
+rank(C*bf2)
+rank(bf2)
+
+<span class="comment">% Observer matrices</span>
+CE = C*bf2
+CEin = inv(CE'*CE)
+H2=bf2*CEin*CE'
+T2 = eye(7)-H2*C
+A12 = T2*A
+rank(obsv(A12,C))
+k12 = place(A12,C,[-1,-2,-3,-4,-5,-6,-7])
+<span class="comment">%F = A1-k1*C</span>
+F2 = A+H2*C*L-k12*C
+k2 = k12 + F2*H2
+</pre><pre class="codeoutput">
+bf2 =
+
+     0
+     0
+     1
+     0
+     0
+     0
+     0
+
+
+ans =
+
+     1
+
+
+ans =
+
+     1
+
+
+CE =
+
+     0
+     0
+     1
+     0
+     0
+     0
+     0
+
+
+CEin =
+
+     1
+
+
+H2 =
+
+     0     0     0     0     0     0     0
+     0     0     0     0     0     0     0
+     0     0     1     0     0     0     0
+     0     0     0     0     0     0     0
+     0     0     0     0     0     0     0
+     0     0     0     0     0     0     0
+     0     0     0     0     0     0     0
+
+
+T2 =
+
+     1     0     0     0     0     0     0
+     0     1     0     0     0     0     0
+     0     0     0     0     0     0     0
+     0     0     0     1     0     0     0
+     0     0     0     0     1     0     0
+     0     0     0     0     0     1     0
+     0     0     0     0     0     0     1
+
+
+A12 =
+
+    -3     1     1     1     0     0     0
+     1    -4     1     1     1     0     0
+     0     0     0     0     0     0     0
+     1     1     0    -3     0     0     1
+     0     1     0     0    -2     0     1
+     0     0     1     0     0    -2     1
+     0     0     0     1     1     1    -3
+
+
+ans =
+
+     7
+
+
+k12 =
+
+         0         0         0         0         0         0         0
+    1.4469    3.0316    0.9203    1.4125    1.3204    0.0027    0.1221
+   -0.1770   -0.4110    5.4289   -0.7112   -0.0196   -0.1038   -0.1124
+    0.9040    1.1596   -0.6336    2.5395    0.1004   -0.0957    0.9599
+         0         0         0         0         0         0         0
+         0         0         0         0         0         0         0
+         0         0         0         0         0         0         0
+
+
+F2 =
+
+   -3.0000    1.0000    1.0000    1.0000         0         0         0
+    1.0000   -7.0316    0.0797   -0.4125    1.0000         0         0
+         0    0.4110   -5.4289    0.7112         0         0         0
+    1.0000   -0.1596    0.6336   -5.5395         0         0    1.0000
+         0    1.0000         0         0   -2.0000         0    1.0000
+         0         0    1.0000         0         0   -2.0000    1.0000
+         0         0         0    1.0000    1.0000    1.0000   -3.0000
+
+
+k2 =
+
+         0         0    1.0000         0         0         0         0
+    1.4469    3.0316    1.0000    1.4125    1.3204    0.0027    0.1221
+   -0.1770   -0.4110         0   -0.7112   -0.0196   -0.1038   -0.1124
+    0.9040    1.1596         0    2.5395    0.1004   -0.0957    0.9599
+         0         0         0         0         0         0         0
+         0         0    1.0000         0         0         0         0
+         0         0         0         0         0         0         0
+
+</pre><h2 id="7">Sim &amp; Plot</h2><pre class="codeinput">sim(<span class="string">'TeixeiraModel'</span>)
+
+figure,
+subplot(311),
+plot(fn2,<span class="string">'LineWidth'</span>,2),ylabel(<span class="string">'r12'</span>),xlabel(<span class="string">'Time (sec)'</span>),title(<span class="string">'Residual Signal for Agent 2'</span>), grid <span class="string">on</span>, ylim([-5,5])
+subplot(312),
+plot(fn3,<span class="string">'r'</span>,<span class="string">'LineWidth'</span>,2),ylabel(<span class="string">'r13'</span>),xlabel(<span class="string">'Time (sec)'</span>),title(<span class="string">'Residual Signal for Agent 3'</span>), grid <span class="string">on</span>, ylim([-5,5])
+subplot(313),
+plot(fn4,<span class="string">'g'</span>,<span class="string">'LineWidth'</span>,2),ylabel(<span class="string">'r14'</span>),xlabel(<span class="string">'Time (sec)'</span>),title(<span class="string">'Residual Signal for Agent 4'</span>), grid <span class="string">on</span>, ylim([-5,5])
+<span class="comment">%</span>
+<span class="comment">% figure,</span>
+<span class="comment">% subplot(311),</span>
+<span class="comment">% plot(tout,y1R,'k'),ylabel('y1_R'),xlabel('Time (sec)'),title('Outputs: y1_R, y2_R, y3_R')</span>
+<span class="comment">% subplot(312),</span>
+<span class="comment">% plot(tout,y2R,'b'),ylabel('y2_R'),xlabel('Time (sec)')</span>
+<span class="comment">% subplot(313),</span>
+<span class="comment">% plot(tout,y3R,'r'),ylabel('y3_R'),xlabel('Time (sec)')</span>
+<span class="comment">%</span>
+<span class="comment">% figure,</span>
+<span class="comment">% plot(tout,r11,'k'),ylabel('r_1^1'),xlabel('Time (sec)')</span>
+<span class="comment">% title('Residual from UIO 1')</span>
+<span class="comment">%</span>
+<span class="comment">% figure,</span>
+<span class="comment">% plot(tout,r12,'k'),ylabel('r_1^2'),xlabel('Time (sec)')</span>
+<span class="comment">% title('Residual from UIO 2')</span>
+<span class="comment">%</span>
+<span class="comment">% figure</span>
+<span class="comment">% ax1=subplot(411),plot(tout,y1R*T1(1,1),'k'),ylabel('y1R x T_1(1,1)')</span>
+<span class="comment">% grid on</span>
+<span class="comment">% ax2=subplot(412),plot(tout,y2R,'r'),ylabel('y2R')</span>
+<span class="comment">% grid on</span>
+<span class="comment">% ax3=subplot(413),plot(tout,z11,'b'),ylabel('z_1^1'),</span>
+<span class="comment">% grid on</span>
+<span class="comment">% ax4=subplot(414),plot(tout,r11,'g'),ylabel('r_1^1'),</span>
+<span class="comment">% grid on</span>
+<span class="comment">% linkaxes([ax1,ax2,ax3,ax4],'x')</span>
+<span class="comment">%</span>
+<span class="comment">% figure,</span>
+<span class="comment">% ax1=subplot(211),plot(tout,r11,'k'),ylabel('r_1^1'),</span>
+<span class="comment">% title('Residual from UIO 1 and UIO 2'),xlabel('Time (hr)')</span>
+<span class="comment">% grid on</span>
+<span class="comment">% ax2=subplot(212),plot(tout,r12,'b'),ylabel('r_1^2')</span>
+<span class="comment">% xlabel('Time (hr)'),grid on</span>
+<span class="comment">% linkaxes([ax1,ax2],'x')</span>
+<span class="comment">% figure</span>
+<span class="comment">% ax1=subplot(411),plot(tout,y1R*T1(1,1),'k'),ylabel('y1R x T_1(1,1)')</span>
+<span class="comment">% grid on</span>
+<span class="comment">% ax2=subplot(412),plot(tout,y2R,'r'),ylabel('y2R')</span>
+<span class="comment">% grid on</span>
+<span class="comment">% ax3=subplot(413),plot(tout,z11,'b'),ylabel('z_1^1'),</span>
+<span class="comment">% grid on</span>
+<span class="comment">% ax4=subplot(414),plot(tout,r11,'g'),ylabel('r_1^1'),</span>
+<span class="comment">% grid on</span>
+<span class="comment">% linkaxes([ax1,ax2,ax3,ax4],'x')</span>
+
+<span class="comment">%</span>
+<span class="comment">% figure,</span>
+<span class="comment">% plot(tout,r2)</span>
+</pre><pre class="codeoutput">Warning: Model 'TeixeiraModel' is using a default value of 0.2 for maximum step
+size. You can disable this diagnostic by setting Automatic solver parameter
+selection to 'none' 
+</pre><img vspace="5" hspace="5" src="intrusionDetectionMS_01.png" style="width:560px;height:420px;" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Sam Nazari
+%  Teixeira MS Thesis Intrusion Detection Model
+%  06-Nov-2016
+%  04-Jan-2017
+%  12-Jan-2017
+
+clear,
+clc
+
+%% Simulation parameters
+TSIM = 20;
+
+% u1Val = 34.632;
+% u2Val = 1641.6;
+% u3Val = 29980;
+% 
+% X0 = [0.3412;525.7;525.7;496.2];
+% 
+% z110 = 518.6174;
+% z410 = -51365.5370;
+% z320 = 472.2;
+% z420 = -18391.8;
+% 
+% fa1 = 0;
+% fa2 = 0;
+% fa3 = 1;
+% 
+% f = [fa1;fa2;fa3]
+%% Dynamic system 
+
+L = [
+    3   -1  -1  -1  0   0   0;
+    -1  4   -1  -1  -1  0   0;
+    -1  -1  3   0   0   -1  0;
+    -1  -1  0   3   0   0  -1;
+    0   -1  0   0   2   0  -1;
+    0   0   -1  0   0   2  -1;
+    0   0   0  -1  -1  -1   3
+    ]
+
+A = -L
+
+B = eye(7)
+Bf=B;
+Bf(2,2)=0
+
+C = [
+    0 0 0 0 0 0 0;
+    0 1 0 0 0 0 0; 
+    0 0 1 0 0 0 0;
+    0 0 0 1 0 0 0;
+    0 0 0 0 0 0 0;
+    0 0 0 0 0 0 0;
+    0 0 0 0 0 0 0
+    ]
+
+E = [1.0;20.758;0.0;0.0]
+
+x0 = [0 1 1 0 0 0 0]
+
+%% Construct Fault Vectors
+f1 = [1 0 0 0 0 0 0]'  % Vertex one is the intruder
+f2 = [0 1 0 0 0 0 0]'  % Vertex two is the intruder
+f3 = [0 0 1 0 0 0 0]'  % Vertex three is the intruder
+f4 = [0 0 0 1 0 0 0]'  % Vertex four is the intruder
+f5 = [0 0 0 0 1 0 0]'  % Vertex five is the intruder
+f6 = [0 0 0 0 0 1 0]'  % Vertex six is the intruder
+f7 = [0 0 0 0 0 0 1]'  % Vertex seven is the intruder
+
+%E = [f1 f2 f3 f4 f5 f6 f7]
+%E = [f2 f3 f4 f5 f6 f7]
+E = [f1 f3 f5]
+
+% Choose the agent to be attacked
+flt1  = 0
+flt2  = 0
+flt3  = 0
+flt4  = 1
+flt5  = 0
+flt6  = 0
+flt7  = 0
+
+% Choose a magnitude for the attack
+f1Val = 10
+f2Val = 10
+f3Val = 10
+f4Val = 10
+f5Val = 10
+f6Val = 10
+f7Val = 10
+
+% Chose the attack time
+tf1   = 2
+tf2   = 2
+tf3   = 2
+tf4   = 2
+tf5   = 2
+tf6   = 5
+tf7   = 7
+
+
+%% UIO 1
+% This UIO is insensitive to faults in agent 2, but can detect faults in agents 3 and 4:
+bf1 = [0 1 0 0 0 0 0]' 
+
+% Rank conditions
+rank(C*bf1)
+rank(bf1)
+
+% Observer matrices
+CE = C*bf1
+CEin = inv(CE'*CE)
+H1=bf1*CEin*CE'
+T1 = eye(7)-H1*C
+A11 = T1*A
+rank(obsv(A11,C))
+k11 = place(A11,C,[-1,-2,-3,-4,-5,-6,-7])
+%F = A1-k1*C
+F1 = A+H1*C*L-k11*C
+k1 = k11 + F1*H1
+
+%% UIO 2
+% This UIO is insensitive to faults in agent 3, but can detect faults in agents 2 and 4:
+bf2 = [0 0 1 0 0 0 0]' 
+
+% Rank conditions
+rank(C*bf2)
+rank(bf2)
+
+% Observer matrices
+CE = C*bf2
+CEin = inv(CE'*CE)
+H2=bf2*CEin*CE'
+T2 = eye(7)-H2*C
+A12 = T2*A
+rank(obsv(A12,C))
+k12 = place(A12,C,[-1,-2,-3,-4,-5,-6,-7])
+%F = A1-k1*C
+F2 = A+H2*C*L-k12*C
+k2 = k12 + F2*H2
+ 
+%% Sim & Plot
+
+sim('TeixeiraModel')
+
+figure,
+subplot(311),
+plot(fn2,'LineWidth',2),ylabel('r12'),xlabel('Time (sec)'),title('Residual Signal for Agent 2'), grid on, ylim([-5,5])
+subplot(312),
+plot(fn3,'r','LineWidth',2),ylabel('r13'),xlabel('Time (sec)'),title('Residual Signal for Agent 3'), grid on, ylim([-5,5])
+subplot(313),
+plot(fn4,'g','LineWidth',2),ylabel('r14'),xlabel('Time (sec)'),title('Residual Signal for Agent 4'), grid on, ylim([-5,5])
+% 
+% figure,
+% subplot(311),
+% plot(tout,y1R,'k'),ylabel('y1_R'),xlabel('Time (sec)'),title('Outputs: y1_R, y2_R, y3_R')
+% subplot(312),
+% plot(tout,y2R,'b'),ylabel('y2_R'),xlabel('Time (sec)')
+% subplot(313),
+% plot(tout,y3R,'r'),ylabel('y3_R'),xlabel('Time (sec)')
+% 
+% figure,
+% plot(tout,r11,'k'),ylabel('r_1^1'),xlabel('Time (sec)')
+% title('Residual from UIO 1')
+% 
+% figure,
+% plot(tout,r12,'k'),ylabel('r_1^2'),xlabel('Time (sec)')
+% title('Residual from UIO 2')
+% 
+% figure
+% ax1=subplot(411),plot(tout,y1R*T1(1,1),'k'),ylabel('y1R x T_1(1,1)')
+% grid on
+% ax2=subplot(412),plot(tout,y2R,'r'),ylabel('y2R')
+% grid on
+% ax3=subplot(413),plot(tout,z11,'b'),ylabel('z_1^1'),
+% grid on
+% ax4=subplot(414),plot(tout,r11,'g'),ylabel('r_1^1'),
+% grid on
+% linkaxes([ax1,ax2,ax3,ax4],'x')
+% 
+% figure,
+% ax1=subplot(211),plot(tout,r11,'k'),ylabel('r_1^1'),
+% title('Residual from UIO 1 and UIO 2'),xlabel('Time (hr)')
+% grid on
+% ax2=subplot(212),plot(tout,r12,'b'),ylabel('r_1^2')
+% xlabel('Time (hr)'),grid on
+% linkaxes([ax1,ax2],'x')
+% figure
+% ax1=subplot(411),plot(tout,y1R*T1(1,1),'k'),ylabel('y1R x T_1(1,1)')
+% grid on
+% ax2=subplot(412),plot(tout,y2R,'r'),ylabel('y2R')
+% grid on
+% ax3=subplot(413),plot(tout,z11,'b'),ylabel('z_1^1'),
+% grid on
+% ax4=subplot(414),plot(tout,r11,'g'),ylabel('r_1^1'),
+% grid on
+% linkaxes([ax1,ax2,ax3,ax4],'x')
+
+% 
+% figure,
+% plot(tout,r2)
+     
+##### SOURCE END #####
+--></body></html>
