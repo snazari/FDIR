@@ -2,6 +2,7 @@
 clear all;
 close all;
 clc;
+%%
 % xDot = A x + B u + Ed d + Ea fa
 % y = C x + Es fs
 % A=[-1 1 1;1 -2 0;0 1 -3];
@@ -26,14 +27,14 @@ xhat0=[2;1;1];
 fahat0=[1];
 
 tEnd=40;
-method = 1; % 1 is pole placement, 2 is LMI
+method = 2; % 1 is pole placement, 2 is LMI
 eta=.15;
 R=0;
 
 z0=xhat0;
 w0=[1;1];
 
-
+%%
 % Finding Observer
 qa = size(Ea,2);
 N = Ed* pinv(C*Ed);
@@ -43,7 +44,7 @@ J = T*Ea;
 A1 = A - N*C*A;
 A1hat=[A1, eta.*J;zeros(qa,n),R];
 Chat=[C, zeros(p,qa)];
-
+%%
 if(method==1)
     % Pole Placement
     observerPoles = 2.*[-3,-3,-6,-10];
@@ -79,7 +80,7 @@ G2 = F*N;
 M1 = -L*C;
 M2 = L*(eye(p)-C*N);
 G = G1+G2;
-
+%%
 
 % Simulating
 sim('PIUIOModelZWSin');

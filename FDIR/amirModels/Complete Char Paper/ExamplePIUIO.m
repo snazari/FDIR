@@ -29,8 +29,6 @@ R=0;
 z0=xhat0;
 w0=[1;1];
 
-
-
 % Finding Observer
 qa = size(Ea,2);
 N = Ed* pinv(C*Ed);

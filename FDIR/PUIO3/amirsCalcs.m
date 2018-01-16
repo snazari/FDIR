@@ -1,22 +1,34 @@
 clear all;
 close all;
 clc;
-% xDot = A x + B u + Ed d + Ea fa
-% y = C x 
-A=[-1 1 1;1 -2 0;0 1 -3];
-B=[1;1;0];
-C=[1 0 0;0 1 0];
-x0=[1;2;3];
 
-n = size(B,1);
-m = size(B,2);
-p = size(C,1);
-tEnd=2;
-z0=[0.1;0.2;0.3];
-d=2; % Constant Disturbance
-Ed=[1;0;0];  % OR Ea=[];
-r = size(Ed,2);
+%% Graph Structure
+Ag = [0 1 1 1 0 0 0;
+     1 0 1 1 1 0 0;
+     1 1 0 0 0 1 0;
+     1 1 0 0 0 0 1;
+     0 1 0 0 0 0 1;
+     0 0 1 0 0 0 1;
+     0 0 0 1 1 1 0];
+ 
+Deg = eye(7);
+for i = 1:7
+    Deg(i,i) = sum(Ag(i,:));
+end
 
+C = eye(7)
+
+L = Deg-Ag
+
+x0 = [0 1 1 0 0 0 0]
+
+A = -L
+
+% Condition: Distinct Eigenvalues
+eig(A)
+
+Ed = [0 1 0 0 0 0 0]'
+%%
 N = Ed* pinv(C*Ed);
 T = eye(size(A))-N*C;
 A1 = A - N*C*A;
@@ -38,6 +50,7 @@ tol=1e-9;
 n1 = size(A1,1);
 p1 = size(C,1);
 warning off;
+
 cvx_begin sdp
 variable P(n1,n1) diagonal
 variable Y(n1,p1)
@@ -58,8 +71,6 @@ F = A1 - G1*C;
 G = G1 + A1*N - G1*C*N;
 H = T*B;
 M = eye(size(A));
-
-
 %%
 Ndhat = pinv(C*Ed);
 % Simulating
