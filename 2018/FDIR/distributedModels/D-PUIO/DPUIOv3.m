@@ -96,7 +96,6 @@ NCA = NC*A
 A1  = A-NCA
 rank(obsv(A1,c1))
 
-
 if( rank(c1*E) ~= rank(E) )
     disp('rank(CE) is different from rank(E)!')
 elseif( sum(sum(N<0)) > 0 )
@@ -148,6 +147,8 @@ H = 0
 x1_0 = 1;
 x2_0 = 0.5;
 x3_0 = 0.25;
+
+x0=[10,1,1,1,1,1,1];
 
 d = 10;
 TSIM = 50;
