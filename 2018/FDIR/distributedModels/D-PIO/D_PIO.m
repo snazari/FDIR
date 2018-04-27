@@ -76,7 +76,7 @@ d5 = [0 0 0 0 1 0 0]'  % Vertex five undergoes a disturbance
 d6 = [0 0 0 0 0 1 0]'  % Vertex six undergoes a disturbance
 d7 = [0 0 0 0 0 0 1]'  % Vertex seven undergoes a disturbance
 
-Ed = [d2,zeros(7,2)]
+Ed = [d2,zeros(7,1) ,zeros(7,1)]
 
 % Choose the agent to undergo a disturbance
 dist1  = 0;
@@ -133,22 +133,33 @@ LI = 10
 ddot0 = 0;
 xdot0 = zeros(7,1)';
 TSIM = 10
-sim('D_PIO')
+sim('D_P_I_O')
 
 % Plot errors
 stateEstimErr = logsout.getElement(1)
 distEstimErr  = logsout.getElement(2)
 yhatEstimErr  = logsout.getElement(3)
-figure(1)
+stateEstimErr.Name = 'State Estimation Error'
+distEstimErr.Name = 'Fault Estimation Error'
+yhatEstimErr.Name = 'Output Estimation Error'
+figure
 subplot(311)
 title('State Estimation Error')
 plot(stateEstimErr.Values,'LineWidth',2),grid on
 subplot(312)
-title('Disturbance Estimation Error')
+title('Fault Estimation Error')
 plot(distEstimErr.Values,'LineWidth',2), grid on
 subplot(313)
 title('Output Estimation Error')
 plot(yhatEstimErr.Values,'LineWidth',2), grid on
+
+dhat.Name='Fault Estimate'
+figure
+title(dhat.Name)
+plot(dhat, 'lineWidth',2),grid on
+xlabel('Time (seconds)')
+ylabel('Fault Estimate')
+legend('Agent 2','Agent 3','Agent 4')
 %% PIO Test
 % A  = [-2 0;0 -3]
 % B  = [1;-1]
@@ -174,108 +185,3 @@ plot(yhatEstimErr.Values,'LineWidth',2), grid on
 % 
 % LI = place(A,C',[-1,-2])
 % LP = 10
-
-%% Step two: Check the condition of Lemma (3.2). If a nonnegative left inverse 
-%  of CEa exists, then compute N=Ea(C*Ea)^g >= 0 and T = I-N*C >= 0
-% n  = size(A,1)
-% p  = size(c1,1)
-% qa = size(Ea,2)
-% N = Ed*pinv(c1*Ed)
-% T = eye(n)-N*c1
-% H = 0
-% J = T*Ea
-% A1 = A - N*c1*A
-% A1hat=[A1, J;zeros(qa,n+qa)]
-% Chat=[c1, zeros(p,qa)]
-% if( rank(c1*Ea) ~= rank(Ea) )
-%     disp('rank(CEa) is different from rank(Ea)!')
-% elseif( rank(c1*Ed) ~= rank(Ed) )
-%     disp('rank(CEd) is different from rank(Ed)!')
-% elseif( sum(sum(N<0)) > 0 )
-%     disp('N is not positive!')
-% % elseif( sum(sum(T<0)) > 0) 
-% %     disp('T=I-NC is not positive!')
-% elseif( rank(obsv(A1,c1)) < rank(A1) )
-%     disp('{A1,Caug} is not observable!')
-% else
-%     disp('ALL OK')
-% end
-% %% Step four: Place the poles of F = A1-G1*C
-% 
-% tol=1e-9;
-% n1 = size(A1hat,1);
-% p1 = size(Chat,1);
-% warning off;
-% cvx_begin sdp
-% variable P(n1,n1) 
-% variable Y(n1,p1)
-% minimize( 1 )
-% subject to
-% P >= 0;
-% C1 = A1hat'*P + P*A1hat - Chat'*Y' - Y*Chat;
-% C1 <= 0 ;
-% C2 = A1hat'*P - Chat'*Y' + eye(n1);
-% C2(:) >= tol.*ones(n1*n1,1);
-% % C3 = P*N*Caug*Aaug + Y*Caug ;
-% % C3(:) >= tol.*ones(n1*n1,1);
-% cvx_solver sedumi %sdpt3 
-% cvx_end
-% 
-% Lhat = P\Y
-%     
-% G1 = Lhat(1:n,:)
-% %L = Lhat(n+1:end,:)
-% D  = Lhat(n+1:end,:)
-% F = A1-G1*c1 
-% G2 = F*N
-% M1 = -D*c1
-% M2 = D*(eye(p)-c1*N)
-% G = G1+G2
-% H = 0
-% R=0
-% 
-%  %% Simulation results
-% %
-% % Set up simulation initial condiditons
-% x1_0 = 1;
-% x2_0 = 0.5;
-% x3_0 = 0.25;
-% 
-% d = 10;
-% TSIM = 50;
-% TH = 5 % detection Threshold
-% %% Sim the system
-% sim('PIUIO')
-% 
-% %% Plot the results
-% figure(1)
-% subplot(311),plot(fn2,'k','lineWidth',1),xlabel('Time in seconds'),
-% legend('Residual Sig.'),grid on,ylim([0,TH]),xlim([0,5])
-% ylabel('Agent 2')
-% title('Distributed PUIO with Fault Occurance at t=2 in Agent 2')
-% subplot(312),plot(fn3,'b','lineWidth',1),xlabel('Time in seconds'),
-% legend('Residual Sig.'),grid on,ylim([0,TH]),xlim([0,5])
-% ylabel('Agent 3'),
-% subplot(313),plot(fn4,'r','lineWidth',1),grid on,ylim([0,TH]),xlim([0,5])
-% xlabel('Time in seconds'),
-% legend('Residual Sig.')
-% ylabel('Agent 4'),title(''),
-% 
-% figure(2)
-% subplot(711), plot(fhat.Data(:,1),'lineWidth',1),xlabel('Time in seconds'),ylabel('Fault Signal 1'),
-% title('Fault Signal'),grid on
-% legend('f1'),ylim([0,2])
-% subplot(712), plot(fhat.Data(:,2),'lineWidth',1),xlabel('Time in seconds'),ylabel('Fault Signal 2'),
-% legend('f2'),ylim([0,2]),grid on
-% subplot(713), plot(fhat.Data(:,3),'lineWidth',1),xlabel('Time in seconds'),ylabel('Fault Signal 3'),
-% legend('f3'),ylim([0,2]),grid on
-% subplot(714), plot(fhat.Data(:,4),'lineWidth',1),xlabel('Time in seconds'),ylabel('Fault Signal 4'),
-% legend('f4'),ylim([0,2]),grid on
-% subplot(715), plot(fhat.Data(:,5),'lineWidth',1),xlabel('Time in seconds'),ylabel('Fault Signal 5'),
-% legend('f5'),ylim([0,2]),grid on
-% subplot(716), plot(fhat.Data(:,6),'lineWidth',1),xlabel('Time in seconds'),ylabel('Fault Signal 6'),
-% legend('f6'),ylim([0,2]),grid on
-% subplot(717), plot(fhat.Data(:,7),'lineWidth',1),xlabel('Time in seconds'),ylabel('Fault Signal 7'),
-% legend('f7'),ylim([0,2]),grid on
-% 
-% 
