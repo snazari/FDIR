@@ -22,8 +22,6 @@ C = eye(7)
 
 L = Deg-Ag
 
-x0 = [0 1 1 0 0 0 0]
-
 A = -L
 
 % Condition: Distinct Eigenvalues
@@ -42,7 +40,7 @@ Ea = f2
 
 % Choose the agent to be attacked
 flt1  = 0;
-flt2  = 1;
+flt2  = 0;
 flt3  = 0;
 flt4  = 0;
 flt5  = 0;
@@ -144,8 +142,13 @@ W = Q*c1
 %LP = place(A,c1',)'
 ALPC = A-LP*c1
 LI = 10
+
+% Plant integrator initial condition
+x0 = [0 1 1 0 0 0 0]
+
+% Observer initial conditions
 ddot0 = 0;
-xdot0 = zeros(7,1)';
+xdot0 = [0 1 1 0 0 0 0]';
 TSIM = 10
 sim('D_P_I_O_R')
 
