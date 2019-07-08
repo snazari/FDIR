@@ -106,7 +106,7 @@ eig(F)
 G = G1 + A1*N - G1*c1*N
 % H = T*B
 H = 0
-
+M = eye(size(A));
  %% Simulation results
 %
 % Set up simulation initial condiditons

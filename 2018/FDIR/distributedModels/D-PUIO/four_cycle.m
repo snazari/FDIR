@@ -5,24 +5,18 @@ clear
 clc
 
 %% Graph Structure
-Ag = [0 1 1 1 0 0 0;
-     1 0 1 1 1 0 0;
-     1 1 0 0 0 1 0;
-     1 1 0 0 0 0 1;
-     0 1 0 0 0 0 1;
-     0 0 1 0 0 0 1;
-     0 0 0 1 1 1 0];
+Ag = [0 1 0 1;1 0 1 0;0 1 0 1;1 0 1 0];
  
-Deg = eye(7);
-for i = 1:7
+Deg = eye(4);
+for i = 1:4
     Deg(i,i) = sum(Ag(i,:));
 end
 
-C = eye(7)
+C = eye(4)
 
 L = Deg-Ag
 
-x0 = [0 1 1 0 0 0 0]
+x0 = [0 1 1 0]
 
 A = -L
 
@@ -30,16 +24,11 @@ A = -L
 eig(A)
 
 %% Construct Fault Vectors
-f1 = [1 0 0 0 0 0 0]'  % Vertex one is the intruder
-f2 = [0 1 0 0 0 0 0]'  % Vertex two is the intruder
-f3 = [0 0 1 0 0 0 0]'  % Vertex three is the intruder
-f4 = [0 0 0 1 0 0 0]'  % Vertex four is the intruder
-f5 = [0 0 0 0 1 0 0]'  % Vertex five is the intruder
-f6 = [0 0 0 0 0 1 0]'  % Vertex six is the intruder
-f7 = [0 0 0 0 0 0 1]'  % Vertex seven is the intruder
+f1 = [1 0 0 0]'  % Vertex one is the intruder
+f2 = [0 1 0 0]'  % Vertex two is the intruder
+f3 = [0 0 1 0]'  % Vertex three is the intruder
+f4 = [0 0 0 1]'  % Vertex four is the intruder
 
-%E = [f1 f2 f3 f4 f5 f6 f7]
-%E = [f2 f3 f4 f5 f6 f7]
 E = f2
 
 % Choose the agent to be attacked
@@ -47,37 +36,27 @@ flt1  = 0;
 flt2  = 1;
 flt3  = 0;
 flt4  = 0;
-flt5  = 0;
-flt6  = 0;
-flt7  = 0;
 
 % Choose a magnitude for the attack
 f1Val = 10;
 f2Val = 10;
 f3Val = 10;
 f4Val = 10;
-f5Val = 10;
-f6Val = 10;
-f7Val = 10;
 
 % Chose the attack time
 tf1   = 2;
 tf2   = 2;
 tf3   = 2;
 tf4   = 2;
-tf5   = 2;
-tf6   = 5;
-tf7   = 7;
 
 %% PUIO 1
 
 % This UIO is insensitive to faults in agent 3, but can detect faults in agents 2 and 4:
-bf1 = [0 0 1 0 0 0 0]' 
+bf1 = [0 0 1 0]' 
 
 % Observer matrices
-c1 = [0 1 0 0 0 0 0;
-      0 0 1 0 0 0 0;
-      0 0 0 1 0 0 0]
+c1 = [0 1 0 0;
+      0 0 1 0]
 
 %% Step one: Check rank
 rank(c1*bf1)
@@ -108,6 +87,10 @@ else
     disp('ALL OK')
 end
 %% Step four: Place the poles of F = A1-G1*C
+%p = [-1,-10,-20,-3,-5,-7,-9]
+%G1=place(A1',c1',p)'
+%F = A1-G1*c1
+%eig(F)
 tol=1e-9;
 n1 = size(A1,1);
 p1 = size(c1,1);
@@ -144,24 +127,24 @@ x1_0 = 1;
 x2_0 = 0.5;
 x3_0 = 0.25;
 
-x0=[10,1,1,1,1,1,1];
+x0=[10,1,1,1];
 
 d = 10;
 TSIM = 50;
 TH = 5 % detection Threshold
 %% Sim the system
-sim('PUIO')
+sim('PUIO_four_cycle')
 
 %% Plot the results
 figure(1)
-subplot(311),plot(fn2,'k','lineWidth',1),xlabel('Time in seconds'),
+subplot(211),plot(fn2,'k','lineWidth',1),xlabel('Time in seconds'),
 legend('Residual Sig.'),grid on,ylim([0,TH]),xlim([0,5])
 ylabel('Agent 2')
 title('Distributed PUIO with Fault Occurance at t=2 in Agent 2')
-subplot(312),plot(fn3,'b','lineWidth',1),xlabel('Time in seconds'),
-legend('Residual Sig.'),grid on,ylim([0,TH]),xlim([0,5])
-ylabel('Agent 3'),
-subplot(313),plot(fn4,'r','lineWidth',1),grid on,ylim([0,TH]),xlim([0,5])
+% subplot(312),plot(fn3,'b','lineWidth',1),xlabel('Time in seconds'),
+% legend('Residual Sig.'),grid on,ylim([0,TH]),xlim([0,5])
+% ylabel('Agent 3'),
+subplot(212),plot(fn4,'r','lineWidth',1),grid on,ylim([0,TH]),xlim([0,5])
 xlabel('Time in seconds'),
 legend('Residual Sig.')
 ylabel('Agent 4'),title(''),
