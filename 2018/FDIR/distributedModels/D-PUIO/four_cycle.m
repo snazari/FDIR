@@ -122,6 +122,7 @@ H = 0
 
 %% 
 G2 = F*N
+G = G1 + G2
 %% Simulation results
 %
 % Set up simulation initial condiditons
@@ -149,6 +150,6 @@ title('Distributed PUIO with Fault Occurance at t=2 in Agent 2')
 subplot(212),plot(fn4,'r','lineWidth',1),grid on,ylim([0,TH]),xlim([0,5])
 xlabel('Time in seconds'),
 legend('Residual Sig.')
-ylabel('Agent 4'),title(''),
+ylabel('Agent 4'),title('Distributed PUIO with Fault Occurance at t=2 in Agent 4'),
 
 
