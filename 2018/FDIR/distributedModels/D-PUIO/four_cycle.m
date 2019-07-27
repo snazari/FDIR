@@ -52,11 +52,11 @@ tf4   = 2;
 %% PUIO 1
 
 % This UIO is insensitive to faults in agent 3, but can detect faults in agents 2 and 4:
-bf1 = [0 0 1 0]' 
+bf1 = [0 0 0 1]' 
 
 % Observer matrices
 c1 = [0 1 0 0;
-      0 0 1 0]
+      0 0 0 1]
 
 %% Step one: Check rank
 rank(c1*bf1)
@@ -112,7 +112,7 @@ cvx_end
 
 G1 = P\Y;
 F = A1 - G1*c1;
-G = G1 + A1*N - G1*c1*N;
+%G = G1 + A1*N - G1*c1*N;
 %H = T*B;
 M = eye(size(A));
 %% Step five: finish the PUIO
@@ -120,7 +120,9 @@ M = eye(size(A));
 % H = T*B
 H = 0
 
- %% Simulation results
+%% 
+G2 = F*N
+%% Simulation results
 %
 % Set up simulation initial condiditons
 x1_0 = 1;
